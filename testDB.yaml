@@ -1,0 +1,23 @@
+# file: mariadb.yml
+---
+- hosts: server1
+  user: test1
+  tasks:
+  - name: Install MariaDB repository
+    become: true
+    become_method: sudo
+    apt_repository: repo='deb [arch=amd64] http://mirror.zol.co.zw/mariadb/repo/10.3/ubuntu xenial main' state=present
+  - name: Add repository key to the system
+    apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=0xF1656F24C74CD1D8
+  - name: Install MariaDB Server
+    apt: name=mariadb-server state=latest update_cache=yes
+  - name: start mariadb
+    service:
+       name: mariadb
+       enabled: true
+       state: started
+  - name: 'Set MariaDB root password for 127.0.0.1'
+    mysql_user:
+       login_user: root
+       password: pass
+       name: root
